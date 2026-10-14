@@ -1,0 +1,26 @@
+[project]
+name = "serve-bench"
+version = "0.1.0"
+description = "Single-GPU vLLM serving benchmark with quality probes (latency + throughput + drift)"
+requires-python = ">=3.10"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+dependencies = ["aiohttp", "numpy"]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff", "mypy"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+ignore_missing_imports = true
