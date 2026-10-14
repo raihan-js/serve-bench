@@ -10,11 +10,12 @@ from pathlib import Path
 def main() -> None:
     rng = random.Random(0)
     kb = Path("/home/raihan/Desktop/APPS/research-learn/kotoba-tutor")
+    sae = Path("/home/raihan/Desktop/APPS/research-learn/sae-bilingual")
     tatoeba = [json.loads(line)["learner"] for line in
                open(kb / "results/m1_rows.jsonl", encoding="utf-8")]
     ja = rng.sample([t for t in tatoeba if any("ぁ" <= c <= "ヶ" for c in t)], 25)
     wiki_ja, wiki_en = [], []
-    for line in open(kb / "data/corpus.txt", encoding="utf-8"):
+    for line in open(sae / "data/corpus.txt", encoding="utf-8"):
         (wiki_ja if any("ぁ" <= c <= "ヶ" for c in line) else wiki_en).append(line.strip())
     en = rng.sample([t for t in wiki_en if 40 <= len(t) <= 300], 25)
     prompts = [{"id": f"q{i:02d}", "lang": "ja" if i < 25 else "en",
