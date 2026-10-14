@@ -16,3 +16,11 @@
   Gentle loads identical. The knob only matters past saturation — the
   harness earns its keep: config comparisons REQUIRE a stress arm.
 - Next: llm-jp-1.8B bf16 (will vLLM's own kernels take it?) + drift check.
+
+## 2026-10-14 — drift probe works: reasoning model unstable at temp 0
+- Same model+weights (Swallow seqs128 vs seqs32): 20/50 quality outputs
+  differ. llm-jp same-server x3: identical. Suspect: Qwen3-RL think traces
+  leak nondeterminism across batches/restarts (sweep sends raw prompts,
+  no /no_think). Verifying with back-to-back same-server Swallow runs.
+- llm-jp-1.8B bf16 serves fine under vLLM (own kernels dodge the
+  transformers RoPE bug): stress TTFT 119ms vs Swallow 432ms, 28.5 r/s.

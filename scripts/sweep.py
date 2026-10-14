@@ -14,7 +14,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 from bench.client import run_fixed, run_poisson, save_jsonl, summarize  # noqa: E402
 
 URL = "http://localhost:8000/v1/completions"
-MODEL = "tokyotech-llm/Qwen3-Swallow-8B-RL-v0.2-AWQ-INT4"
+MODEL = sys.argv[2] if len(sys.argv) > 2 else \
+    "tokyotech-llm/Qwen3-Swallow-8B-RL-v0.2-AWQ-INT4"
 
 
 async def quality(url: str, model: str, prompts: list[dict]) -> list[dict]:
