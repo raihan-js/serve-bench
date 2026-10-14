@@ -11,7 +11,7 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
-from bench.client import run_fixed, run_poisson, save_jsonl, summarize  # noqa: E402
+from bench.client import run_fixed, run_poisson, save_jsonl, summarize
 
 URL = "http://localhost:8000/v1/completions"
 MODEL = sys.argv[2] if len(sys.argv) > 2 else \
@@ -34,15 +34,19 @@ async def quality(url: str, model: str, prompts: list[dict]) -> list[dict]:
                     out.append({"id": p["id"], "lang": p["lang"], "status": r.status,
                                 "out_sha": hashlib.sha256(txt.encode()).hexdigest()[:16],
                                 "secs": round(time.monotonic() - t0, 2)})
-            except Exception as e:
+            except (OSError, ValueError, KeyError) as e:
                 out.append({"id": p["id"], "status": -1, "error": type(e).__name__})
     return out
 
 
+def load_prompts() -> tuple[list[str], list[dict]]:
+    with open("data/prompts.json", encoding="utf-8") as f:
+        qprompts = json.load(f)
+    return [p["text"] for p in qprompts], qprompts
+
+
 async def main(tag: str) -> None:
-    prompts = [p["text"] for p in
-               json.load(open("data/prompts.json", encoding="utf-8"))]
-    qprompts = json.load(open("data/prompts.json", encoding="utf-8"))
+    prompts, qprompts = await asyncio.to_thread(load_prompts)
     t0 = time.time()
     recs = await run_fixed(URL, MODEL, (prompts * 4)[:100], concurrency=8)
     save_jsonl(recs, f"results/{tag}_fixed_c8.jsonl")

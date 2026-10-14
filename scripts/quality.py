@@ -6,16 +6,18 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from sweep import quality  # noqa: E402  (sibling script import)
+from sweep import quality
 
 
 async def main(tag: str, model: str) -> None:
     import json
 
-    qprompts = json.load(open("data/prompts.json", encoding="utf-8"))
-    q = await quality("http://localhost:8000/v1/completions", model, qprompts)
-    from pathlib import Path
+    def load() -> object:
+        with open("data/prompts.json", encoding="utf-8") as f:
+            return json.load(f)
 
+    qprompts = await asyncio.to_thread(load)
+    q = await quality("http://localhost:8000/v1/completions", model, qprompts)
     Path(f"results/{tag}_quality.json").write_text(json.dumps(q, indent=1))
     print(f"quality: {sum(1 for r in q if r.get('status') == 200)}/{len(q)} ok")
 

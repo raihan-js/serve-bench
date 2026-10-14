@@ -49,7 +49,7 @@ async def one_request(session: Any, url: str, model: str, prompt: str,
                 if t_first is None:
                     t_first = time.monotonic()
                 n_tok += 1
-    except (OSError, asyncio.TimeoutError) as e:
+    except (OSError, asyncio.TimeoutError, ValueError, KeyError) as e:
         rec["status"] = -1
         rec["error"] = type(e).__name__
     end = time.monotonic()
