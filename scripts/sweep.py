@@ -49,6 +49,10 @@ async def main(tag: str) -> None:
     recs = await run_fixed(URL, MODEL, (prompts * 4)[:100], concurrency=32)
     save_jsonl(recs, f"results/{tag}_fixed_c32.jsonl")
     print("fixed c32:", json.dumps(summarize(recs)), flush=True)
+    recs = await run_fixed(URL, MODEL, (prompts * 8)[:200], concurrency=64,
+                           max_tokens=256)
+    save_jsonl(recs, f"results/{tag}_stress_c64.jsonl")
+    print("stress c64x256:", json.dumps(summarize(recs)), flush=True)
     recs = await run_poisson(URL, MODEL, prompts, rate=4.0, seconds=60)
     save_jsonl(recs, f"results/{tag}_poisson.jsonl")
     print("poisson:", json.dumps(summarize(recs)), flush=True)
