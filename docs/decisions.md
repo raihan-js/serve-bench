@@ -10,3 +10,9 @@
   never saturates under gentle load — added stress arm (c64, 256 out).
 - Stress on seqs=32: TTFT p50 8.3s / p95 8.8s (vs 0.2s gentle), TPOT flat
   16ms. Textbook prefill queueing collapse. Next: same stress at seqs=128.
+
+## 2026-10-14 — max-num-seqs 128 vs 32 under stress: 19x TTFT gap
+- Identical stress (c64, 256 out): seqs=32 TTFT p50 8.3s, seqs=128 0.43s.
+  Gentle loads identical. The knob only matters past saturation — the
+  harness earns its keep: config comparisons REQUIRE a stress arm.
+- Next: llm-jp-1.8B bf16 (will vLLM's own kernels take it?) + drift check.
